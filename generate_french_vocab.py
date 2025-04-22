@@ -7,9 +7,10 @@ from tqdm import tqdm
 from translator.client.client import TranslatorClient
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
 
 URL = "https://1000mostcommonwords.com/1000-most-common-french-words/"
-OUT_CSV = "french_vocab_2000.csv"
+OUT_CSV = f"french_vocab_{datetime.now().strftime('%Y%m%d')}.csv"
 BATCH_SIZE = 50  # 一度に翻訳する単語数
 
 def download_word_list():
