@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
 URL = "https://1000mostcommonwords.com/1000-most-common-french-words/"
-OUT_CSV = f"french_vocab_{datetime.now().strftime('%Y%m%d')}.csv"
+OUT_CSV = f"french_vocab_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
 BATCH_SIZE = 50  # 一度に翻訳する単語数
 
 def download_word_list():
