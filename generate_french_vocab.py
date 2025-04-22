@@ -4,10 +4,13 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-from time import sleep
+from translator.client.client import TranslatorClient
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 URL = "https://1000mostcommonwords.com/1000-most-common-french-words/"
 OUT_CSV = "french_vocab_2000.csv"
+BATCH_SIZE = 50  # 一度に翻訳する単語数
 
 def download_word_list():
     print("フランス語単語リストをダウンロード中...")
@@ -37,21 +40,19 @@ def extract_words(html_content):
     
     return words
 
-def translate_to_japanese(words):
-    from googletrans import Translator
-    translator = Translator()
+async def translate_batch(client, texts):
+    try:
+        return client.batch_translate(texts)
+    except Exception as e:
+        print(f"翻訳エラー: {e}")
+        return texts
+
+async def translate_all_words(client, words):
     translated_words = []
-    print("日本語に翻訳中... (数分かかる場合があります)")
-    
-    for word in tqdm(words):
-        try:
-            translation = translator.translate(word, src='en', dest='ja')
-            translated_words.append(translation.text)
-            sleep(0.5)  # API制限を避けるため
-        except Exception as e:
-            print(f"翻訳エラー ({word}): {e}")
-            translated_words.append(word)
-    
+    for i in range(0, len(words), BATCH_SIZE):
+        batch = words[i:i+BATCH_SIZE]
+        translated_batch = await translate_batch(client, batch)
+        translated_words.extend(translated_batch)
     return translated_words
 
 def main():
@@ -80,8 +81,13 @@ def main():
     # 日本語訳への変換（オプション）
     use_japanese = input("英語訳を日本語訳に変換しますか？ (y/n): ").lower() == 'y'
     if use_japanese:
-        japanese_translations = translate_to_japanese(english_words)
-        df["Back"] = japanese_translations
+        print("日本語に翻訳中...")
+        client = TranslatorClient()
+        try:
+            translated_words = asyncio.run(translate_all_words(client, english_words))
+            df["Back"] = translated_words
+        finally:
+            client.close()
 
     # CSVファイルとして保存
     df.to_csv(OUT_CSV, index=False)
