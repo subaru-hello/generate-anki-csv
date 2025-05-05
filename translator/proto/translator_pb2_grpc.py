@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from proto import translator_pb2 as proto_dot_translator__pb2
+from translator.proto import translator_pb2 as translator__pb2
 
 GRPC_GENERATED_VERSION = '1.71.0'
 GRPC_VERSION = grpc.__version__
@@ -36,14 +36,14 @@ class TranslatorStub(object):
         """
         self.Translate = channel.unary_unary(
                 '/translator.Translator/Translate',
-                request_serializer=proto_dot_translator__pb2.TranslateRequest.SerializeToString,
-                response_deserializer=proto_dot_translator__pb2.TranslateResponse.FromString,
-                _registered_method=True)
+                request_serializer=translator__pb2.TranslateRequest.SerializeToString,
+                response_deserializer=translator__pb2.TranslateResponse.FromString,
+                )
         self.BatchTranslate = channel.unary_unary(
                 '/translator.Translator/BatchTranslate',
-                request_serializer=proto_dot_translator__pb2.BatchTranslateRequest.SerializeToString,
-                response_deserializer=proto_dot_translator__pb2.BatchTranslateResponse.FromString,
-                _registered_method=True)
+                request_serializer=translator__pb2.BatchTranslateRequest.SerializeToString,
+                response_deserializer=translator__pb2.BatchTranslateResponse.FromString,
+                )
 
 
 class TranslatorServicer(object):
@@ -66,19 +66,18 @@ def add_TranslatorServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Translate': grpc.unary_unary_rpc_method_handler(
                     servicer.Translate,
-                    request_deserializer=proto_dot_translator__pb2.TranslateRequest.FromString,
-                    response_serializer=proto_dot_translator__pb2.TranslateResponse.SerializeToString,
+                    request_deserializer=translator__pb2.TranslateRequest.FromString,
+                    response_serializer=translator__pb2.TranslateResponse.SerializeToString,
             ),
             'BatchTranslate': grpc.unary_unary_rpc_method_handler(
                     servicer.BatchTranslate,
-                    request_deserializer=proto_dot_translator__pb2.BatchTranslateRequest.FromString,
-                    response_serializer=proto_dot_translator__pb2.BatchTranslateResponse.SerializeToString,
+                    request_deserializer=translator__pb2.BatchTranslateRequest.FromString,
+                    response_serializer=translator__pb2.BatchTranslateResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
             'translator.Translator', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('translator.Translator', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
@@ -96,21 +95,11 @@ class Translator(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/translator.Translator/Translate',
-            proto_dot_translator__pb2.TranslateRequest.SerializeToString,
-            proto_dot_translator__pb2.TranslateResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
+        return grpc.experimental.unary_unary(request, target, '/translator.Translator/Translate',
+            translator__pb2.TranslateRequest.SerializeToString,
+            translator__pb2.TranslateResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def BatchTranslate(request,
@@ -123,18 +112,8 @@ class Translator(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/translator.Translator/BatchTranslate',
-            proto_dot_translator__pb2.BatchTranslateRequest.SerializeToString,
-            proto_dot_translator__pb2.BatchTranslateResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
+        return grpc.experimental.unary_unary(request, target, '/translator.Translator/BatchTranslate',
+            translator__pb2.BatchTranslateRequest.SerializeToString,
+            translator__pb2.BatchTranslateResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
